@@ -151,33 +151,33 @@ def bookings():
     return render_template('booking.html',query=query)
 
 
-# @app.route("/edit/<string:pid>",methods=['POST','GET'])
-# @login_required
-# def edit(pid):
-#     posts=Patients.query.filter_by(pid=pid).first()
-#     if request.method=="POST":
-#         email=request.form.get('email')
-#         name=request.form.get('name')
-#         gender=request.form.get('gender')
-#         slot=request.form.get('slot')
-#         disease=request.form.get('disease')
-#         time=request.form.get('time')
-#         date=request.form.get('date')
-#         dept=request.form.get('dept')
-#         number=request.form.get('number')
-#         db.engine.execute(f"UPDATE `patients` SET `email` = '{email}', `name` = '{name}', `gender` = '{gender}', `slot` = '{slot}', `disease` = '{disease}', `time` = '{time}', `date` = '{date}', `dept` = '{dept}', `number` = '{number}' WHERE `patients`.`pid` = {pid}")
-#         flash("Slot is Updates","success")
-#         return redirect('/bookings')
+@app.route("/edit/<string:app_id>",methods=['POST','GET'])
+@login_required
+def edit(app_id):
+    posts=Appointments.query.filter_by(app_id=app_id).first()
+    if request.method=="POST":
+        email=request.form.get('email')
+        name=request.form.get('name')
+        gender=request.form.get('gender')
+        slot=request.form.get('slot')
+        disease=request.form.get('disease')
+        time=request.form.get('time')
+        date=request.form.get('date')
+        dept=request.form.get('dept')
+        number=request.form.get('number')
+        db.engine.execute(f"UPDATE `appointments` SET `email` = '{email}', `name` = '{name}', `gender` = '{gender}', `slot` = '{slot}', `disease` = '{disease}', `time` = '{time}', `date` = '{date}', `dept` = '{dept}', `number` = '{number}' WHERE `appointments`.`app_id` = {app_id}")
+        flash("Slot is Updates","success")
+        return redirect('/appointments')
     
-#     return render_template('edit.html',posts=posts)
+    return render_template('edit.html',posts=posts)
 
 
-# @app.route("/delete/<string:pid>",methods=['POST','GET'])
-# @login_required
-# def delete(pid):
-#     db.engine.execute(f"DELETE FROM `patients` WHERE `patients`.`pid`={pid}")
-#     flash("Slot Deleted Successful","danger")
-#     return redirect('/bookings')
+@app.route("/delete/<string:app_id>",methods=['POST','GET'])
+@login_required
+def delete(app_id):
+    db.engine.execute(f"DELETE FROM `appointments` WHERE `appointments`.`app_id`={app_id}")
+    flash("Slot Deleted Successful","danger")
+    return redirect('/appointments')
 #b.,n
 
 
