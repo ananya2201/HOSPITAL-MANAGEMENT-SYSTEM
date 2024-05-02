@@ -1,11 +1,12 @@
 from flask import Flask,render_template,request,session,redirect,url_for,flash
 from flask_sqlalchemy import SQLAlchemy
-# from flask_login import UserMixin
-# from werkzeug.security import generate_password_hash,check_password_hash
-# from flask_login import login_user,logout_user,login_manager,LoginManager
-# from flask_login import login_required,current_user
-# from flask_mail import Mail
-# import json
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash,check_password_hash
+from flask_login import login_user,logout_user,login_manager,LoginManager
+from flask_login import login_required,current_user
+from flask_mail import Mail
+import json
+
 
 # with open('config.json','r') as c:
 #     params = json.load(c)["params"]
@@ -70,11 +71,11 @@ class Appointments(db.Model):
     dept=db.Column(db.String(50))
     number=db.Column(db.String(50))
 
-# class Doctors(db.Model):
-#     did=db.Column(db.Integer,primary_key=True)
-#     email=db.Column(db.String(50))
-#     doctorname=db.Column(db.String(50))
-#     dept=db.Column(db.String(50))
+class Doctors(db.Model):
+    did=db.Column(db.Integer,primary_key=True)
+    email=db.Column(db.String(50))
+    doctorname=db.Column(db.String(50))
+    dept=db.Column(db.String(50))
 
 # class Trigr(db.Model):
 #     tid=db.Column(db.Integer,primary_key=True)
@@ -89,27 +90,27 @@ class Appointments(db.Model):
 
 
 # # here we will pass endpoints and run the fuction
-# @app.route('/')
-# def index():
-#     a=params['gmail-user']
-#     print(a)
-#     return render_template('index.html')
+@app.route('/')
+def index():
+    a=params['gmail-user']
+    print(a)
+    return render_template('index.html')
     
 
 
-# @app.route('/doctors',methods=['POST','GET'])
-# def doctors():
+@app.route('/doctors',methods=['POST','GET'])
+def doctors():
 
-#     if request.method=="POST":
+    if request.method=="POST":
 
-#         email=request.form.get('email')
-#         doctorname=request.form.get('doctorname')
-#         dept=request.form.get('dept')
+        email=request.form.get('email')
+        doctorname=request.form.get('doctorname')
+        dept=request.form.get('dept')
 
-#         query=db.engine.execute(f"INSERT INTO `doctors` (`email`,`doctorname`,`dept`) VALUES ('{email}','{doctorname}','{dept}')")
-#         flash("Information is Stored","primary")
+        query=db.engine.execute(f"INSERT INTO `doctors` (`email`,`doctorname`,`dept`) VALUES ('{email}','{doctorname}','{dept}')")
+        flash("Information is Stored","primary")
 
-#     return render_template('doctor.html')
+    return render_template('doctor.html')
 
 
 #here
