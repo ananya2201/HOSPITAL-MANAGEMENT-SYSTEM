@@ -4,8 +4,8 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user,logout_user,login_manager,LoginManager
 from flask_login import login_required,current_user
-from flask_mail import Mail
-import json
+# from flask_mail import Mail
+# import json
 
 
 # with open('config.json','r') as c:
@@ -18,8 +18,8 @@ app.secret_key='dbms'
 
 
 # this is for getting unique user access
-# login_manager=LoginManager(app)
-# login_manager.login_view='login'
+login_manager=LoginManager(app)
+login_manager.login_view='login'
 
 # SMTP MAIL SERVER SETTINGS
 
@@ -33,9 +33,9 @@ app.secret_key='dbms'
 # mail = Mail(app)
 
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 
@@ -52,11 +52,11 @@ db=SQLAlchemy(app)
 #     name=db.Column(db.String(100))
 #     email=db.Column(db.String(100))
 
-# class User(UserMixin,db.Model):
-#     id=db.Column(db.Integer,primary_key=True)
-#     username=db.Column(db.String(50))
-#     email=db.Column(db.String(50),unique=True)
-#     password=db.Column(db.String(1000))
+class User(UserMixin,db.Model):
+    id=db.Column(db.Integer,primary_key=True)
+    username=db.Column(db.String(50))
+    email=db.Column(db.String(50),unique=True)
+    password=db.Column(db.String(1000))
 
 #here
 class Appointments(db.Model):
@@ -77,13 +77,13 @@ class Doctors(db.Model):
     doctorname=db.Column(db.String(50))
     dept=db.Column(db.String(50))
 
-# class Trigr(db.Model):
-#     tid=db.Column(db.Integer,primary_key=True)
-#     pid=db.Column(db.Integer)
-#     email=db.Column(db.String(50))
-#     name=db.Column(db.String(50))
-#     action=db.Column(db.String(50))
-#     timestamp=db.Column(db.String(50))
+class Trigr(db.Model):
+    tid=db.Column(db.Integer,primary_key=True)
+    pid=db.Column(db.Integer)
+    email=db.Column(db.String(50))
+    name=db.Column(db.String(50))
+    action=db.Column(db.String(50))
+    timestamp=db.Column(db.String(50))
 
 
 
@@ -186,58 +186,58 @@ def delete(app_id):
 
 
 
-# @app.route('/signup',methods=['POST','GET'])
-# def signup():
-#     if request.method == "POST":
-#         username=request.form.get('username')
-#         email=request.form.get('email')
-#         password=request.form.get('password')
-#         user=User.query.filter_by(email=email).first()
-#         if user:
-#             flash("Email Already Exist","warning")
-#             return render_template('/signup.html')
-#         encpassword=generate_password_hash(password)
+@app.route('/signup',methods=['POST','GET'])
+def signup():
+    if request.method == "POST":
+        username=request.form.get('username')
+        email=request.form.get('email')
+        password=request.form.get('password')
+        user=User.query.filter_by(email=email).first()
+        if user:
+            flash("Email Already Exist","warning")
+            return render_template('/signup.html')
+        encpassword=generate_password_hash(password)
 
-#         new_user=db.engine.execute(f"INSERT INTO `user` (`username`,`email`,`password`) VALUES ('{username}','{email}','{encpassword}')")
+         new_user=db.engine.execute(f"INSERT INTO `user` (`username`,`email`,`password`) VALUES ('{username}','{email}','{encpassword}')")
 
-#         # this is method 2 to save data in db
-#         # newuser=User(username=username,email=email,password=encpassword)
-#         # db.session.add(newuser)
-#         # db.session.commit()
-#         flash("Signup Succes Please Login","success")
-#         return render_template('login.html')
+        # this is method 2 to save data in db
+        # newuser=User(username=username,email=email,password=encpassword)
+        # db.session.add(newuser)
+        # db.session.commit()
+        flash("Signup Succes Please Login","success")
+        return render_template('login.html')
 
           
 
-#     return render_template('signup.html')
+     return render_template('signup.html')
 
-# @app.route('/login',methods=['POST','GET'])
-# def login():
-#     if request.method == "POST":
-#         email=request.form.get('email')
-#         password=request.form.get('password')
-#         user=User.query.filter_by(email=email).first()
+@app.route('/login',methods=['POST','GET'])
+def login():
+    if request.method == "POST":
+        email=request.form.get('email')
+        password=request.form.get('password')
+        user=User.query.filter_by(email=email).first()
 
-#         if user and check_password_hash(user.password,password):
-#             login_user(user)
-#             flash("Login Success","primary")
-#             return redirect(url_for('index'))
-#         else:
-#             flash("invalid credentials","danger")
-#             return render_template('login.html')    
-
-
+        if user and check_password_hash(user.password,password):
+            login_user(user)
+            flash("Login Success","primary")
+            return redirect(url_for('index'))
+        else:
+            flash("invalid credentials","danger")
+            return render_template('login.html')    
 
 
 
-#     return render_template('login.html')
 
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     flash("Logout SuccessFul","warning")
-#     return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Logout SuccessFul","warning")
+    return redirect(url_for('login'))
 
 
 
@@ -250,35 +250,35 @@ def delete(app_id):
 #         return 'My db is not Connected'
     
 
-# @app.route('/details')
-# @login_required
-# def details():
-#     # posts=Trigr.query.all()
-#     posts=db.engine.execute("SELECT * FROM `trigr`")
-#     return render_template('trigers.html',posts=posts)
+@app.route('/details')
+@login_required
+def details():
+    # posts=Trigr.query.all()
+    posts=db.engine.execute("SELECT * FROM `trigr`")
+    return render_template('trigers.html',posts=posts)
 
 
-# @app.route('/search',methods=['POST','GET'])
-# @login_required
-# def search():
-#     if request.method=="POST":
-#         query=request.form.get('search')
-#         dept=Doctors.query.filter_by(dept=query).first()
-#         name=Doctors.query.filter_by(doctorname=query).first()
-#         if name:
+@app.route('/search',methods=['POST','GET'])
+@login_required
+def search():
+    if request.method=="POST":
+        query=request.form.get('search')
+        dept=Doctors.query.filter_by(dept=query).first()
+        name=Doctors.query.filter_by(doctorname=query).first()
+        if name:
 
-#             flash("Doctor is Available","info")
-#         else:
+            flash("Doctor is Available","info")
+        else:
 
-#             flash("Doctor is Not Available","danger")
-#     return render_template('index.html')
-
-
-
+            flash("Doctor is Not Available","danger")
+    return render_template('index.html')
 
 
 
-# app.run(debug=True)    
 
 
-# # username=current_user.username
+
+app.run(debug=True)    
+
+
+# username=current_user.username
